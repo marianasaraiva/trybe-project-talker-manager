@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const { getTalker } = require('./functions');
+const { getTalker, token, validEmail, validPassword } = require('./functions');
 
 const app = express();
 app.use(bodyParser.json());
@@ -8,9 +8,16 @@ app.use(bodyParser.json());
 const HTTP_OK_STATUS = 200;
 const PORT = '3000';
 
+// Requisito 03
+app.post('/login', validEmail, validPassword, (req, res, next) => {
+  res.status(200).json({ token: `${token()}` });
+  next();
+});
+
 // Requisito 01
 app.get('/talker', async (req, res, _next) => {
 const talkerResult = await getTalker();
+if (!talkerResult) return res.status(200).json({});
 res.status(HTTP_OK_STATUS).json(talkerResult);
 });
 
