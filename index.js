@@ -27,9 +27,9 @@ app.post('/login', validEmail, validPassword, (req, res, next) => {
 
 // Requisito 01
 app.get('/talker', async (req, res, _next) => {
-const talkerResult = await getTalker();
-if (!talkerResult) return res.status(200).json({});
-res.status(HTTP_OK_STATUS).json(talkerResult);
+  const talkerResult = await getTalker();
+  if (!talkerResult) return res.status(200).json({});
+  res.status(HTTP_OK_STATUS).json(talkerResult);
 });
 
 // Requisito 02
@@ -47,19 +47,28 @@ app.get('/talker/:id', async (req, res, _next) => {
 
 // Requisito 04
 // Auxilio mentoria: Rafa Guimaraes com correção de bugs.
-app.post('/talker', 
+app.post('/talker',
   validToken,
   validName,
   validAge,
   validTalk,
   validTalkKeys,
   async (req, res, _next) => {
-  const { name, age, talk: { watchedAt, rate } } = req.body;
+    const { name, age, talk: { watchedAt, rate } } = req.body;
+    const getTalkers = await getTalker();
+    await setTalker([
+      ...getTalkers,
+      { name, age, id: getTalkers.length + 1, talk: { watchedAt, rate } }]);
+    res.status(201).send({ name, age, id: getTalkers.length + 1, talk: { watchedAt, rate } });
+  });
+
+// Requisito 06
+app.delete('/talker/:id', validToken, async (req, res) => {
+  const { id } = req.params;
   const getTalkers = await getTalker();
-  await setTalker([
-    ...getTalkers,
-    { name, age, id: getTalkers.length + 1, talk: { watchedAt, rate } }]);
-  res.status(201).send({ name, age, id: getTalkers.length + 1, talk: { watchedAt, rate } });
+  const deleteID = getTalkers.filter((talker) => talker.id === id);
+  await setTalker([deleteID]);
+  res.status(204).send();
 });
 
 // não remova esse endpoint, e para o avaliador funcionar

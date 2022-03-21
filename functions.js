@@ -56,7 +56,6 @@ function validPassword(req, res, next) {
 
     next();
   }
-// validToken();
 
 function validName(req, res, next) {
   const { name } = req.body;
@@ -70,6 +69,9 @@ function validName(req, res, next) {
 function validAge(req, res, next) {
   const { age } = req.body;
   if (!+age) {
+    return res.status(400).json({ message: 'O campo "age" é obrigatório' });
+  }
+  if (age === '') { 
     return res.status(400).json({ message: 'O campo "age" é obrigatório' });
   }
   if (age < 18) {
