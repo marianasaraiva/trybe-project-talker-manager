@@ -11,7 +11,7 @@ function setTalker(addTalker) {
 }
 
 //  Requisito 03
-// gerando token alfanumérico aleatório com 16 caracteres:
+// gerando token alfanumérico aleatório com 16 caracteres: https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript/38622545
 function rand() {
   return ((Math.random() + 1).toString(36).substring(2, 10));
 }
@@ -45,7 +45,7 @@ function validPassword(req, res, next) {
 
   function validToken(req, res, next) {
     const token = req.headers.authorization;
-    // Referência Regex = Course
+    // Referência Regex = https://stackoverflow.com/questions/12589950/regex-need-to-validate-barcode
     const tokenRegex = /^[a-zA-Z0-9]{16}$/;
     if (!token) {
       return res.status(401).json({ message: 'Token não encontrado' });
