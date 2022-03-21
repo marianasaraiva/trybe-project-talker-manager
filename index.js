@@ -32,6 +32,16 @@ app.get('/talker', async (req, res, _next) => {
   res.status(HTTP_OK_STATUS).json(talkerResult);
 });
 
+// Requisito 07
+app.get('/talker/search', validToken, async (req, res) => {
+  const { name } = req.query;
+  const getTalkers = await getTalker();
+  const filterTalker = getTalkers.filter((talker) => talker.name.includes(name));
+  if (!name) return res.status(200).send(getTalkers);
+  if (!filterTalker) return res.status(200).send(getTalkers);
+  res.status(200).json(filterTalker);
+});
+
 // Requisito 02
 app.get('/talker/:id', async (req, res, _next) => {
   const { id } = req.params;
@@ -59,26 +69,6 @@ app.post('/talker',
       { name, age, id: getTalkers.length + 1, talk: { watchedAt, rate } }]);
     res.status(201).send({ name, age, id: getTalkers.length + 1, talk: { watchedAt, rate } });
   });
-
-// Requisito 05
-// app.put('/talker/:id',
-//   validToken,
-//   validName,
-//   validAge,
-//   validTalk,
-//   validTalkKeys,
-//   async (req, res, _next) => {
-//     const { id } = req.params;
-//     const { name, age, talk: { watchedAt, rate } } = req.body;
-//     const getTalkers = await getTalker();
-//     const findPutID = getTalkers.find((talker) => talker.id === +id);
-//     await setTalker([
-//       getTalkers[findPutID] = { ...getTalkers[findPutID], name, id, age, talk: { watchedAt, rate } },
-//     ]);
-//     return res.status(200).send([
-//       getTalkers[findPutID] = { ...getTalkers[findPutID], name, id, age, talk: { watchedAt, rate } },
-//     ]);
-//   });
 
 // Requisito 05
 app.put('/talker/:id',
