@@ -45,6 +45,7 @@ function validPassword(req, res, next) {
 
   function validToken(req, res, next) {
     const token = req.headers.authorization;
+    // Referência Regex = Course
     const tokenRegex = /^[a-zA-Z0-9]{16}$/;
     if (!token) {
       return res.status(401).json({ message: 'Token não encontrado' });
@@ -99,6 +100,7 @@ function validTalk(req, res, next) {
 function validTalkKeys(req, res, next) {
   const { talk } = req.body;
   const { watchedAt, rate } = talk;
+  // Referência do Regex data: https://pt.stackoverflow.com/questions/371316/valida%C3%A7%C3%A3o-regex-de-data-com-2-2-4-caracteres
   const regexDate = /^(\d{2})\/(\d{2})\/(\d{4})$/;
   if (!watchedAt || !rate) {
     return res.status(400).json({
