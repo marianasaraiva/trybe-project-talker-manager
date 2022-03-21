@@ -35,9 +35,7 @@ app.get('/talker', async (req, res, _next) => {
 // Requisito 02
 app.get('/talker/:id', async (req, res, _next) => {
   const { id } = req.params;
-  console.log(id);
   const talkerResult = await getTalker();
-  console.log(talkerResult);
   const findTalkerById = talkerResult.find((talker) => talker.id === +id);
   if (!findTalkerById) {
     return res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
@@ -60,6 +58,45 @@ app.post('/talker',
       ...getTalkers,
       { name, age, id: getTalkers.length + 1, talk: { watchedAt, rate } }]);
     res.status(201).send({ name, age, id: getTalkers.length + 1, talk: { watchedAt, rate } });
+  });
+
+// Requisito 05
+// app.put('/talker/:id',
+//   validToken,
+//   validName,
+//   validAge,
+//   validTalk,
+//   validTalkKeys,
+//   async (req, res, _next) => {
+//     const { id } = req.params;
+//     const { name, age, talk: { watchedAt, rate } } = req.body;
+//     const getTalkers = await getTalker();
+//     const findPutID = getTalkers.find((talker) => talker.id === +id);
+//     await setTalker([
+//       getTalkers[findPutID] = { ...getTalkers[findPutID], name, id, age, talk: { watchedAt, rate } },
+//     ]);
+//     return res.status(200).send([
+//       getTalkers[findPutID] = { ...getTalkers[findPutID], name, id, age, talk: { watchedAt, rate } },
+//     ]);
+//   });
+
+// Requisito 05
+app.put('/talker/:id',
+  validToken,
+  validName,
+  validAge,
+  validTalk,
+  validTalkKeys,
+  async (req, res, _next) => {
+    const { id } = req.params;
+    const { name, age, talk } = req.body;
+    const getTalkers = await getTalker();
+    const findPut = getTalkers.find((talker) => talker.id === +id);
+    findPut.name = name;
+    findPut.age = age;
+    findPut.talk = talk;
+    await setTalker([...getTalkers]);
+    return res.status(200).send(findPut);
   });
 
 // Requisito 06
