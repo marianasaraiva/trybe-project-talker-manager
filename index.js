@@ -2,14 +2,15 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const {
   getTalker,
-  token,
+  tokenGenerate,
   validEmail,
   validPassword,
   validName,
   validAge,
   validTalk,
   setTalker,
-  // validToken,
+  validTalkKeys,
+  validToken,
 } = require('./functions');
 
 const app = express();
@@ -20,7 +21,7 @@ const PORT = '3000';
 
 // Requisito 03
 app.post('/login', validEmail, validPassword, (req, res, next) => {
-  res.status(200).json({ token: `${token()}` });
+  res.status(200).json({ token: `${tokenGenerate()}` });
   next();
 });
 
@@ -45,18 +46,20 @@ app.get('/talker/:id', async (req, res, _next) => {
 });
 
 // Requisito 04
+// Auxilio mentoria: Rafa Guimaraes com correção de bugs.
 app.post('/talker', 
-  // validToken,
+  validToken,
   validName,
   validAge,
   validTalk,
+  validTalkKeys,
   async (req, res, _next) => {
   const { name, age, talk: { watchedAt, rate } } = req.body;
   const getTalkers = await getTalker();
   await setTalker([
     ...getTalkers,
-    { name, age, talk: { watchedAt, rate } }]);
-  res.status(201).send({ name, age, talk: { watchedAt, rate } });
+    { name, age, id: getTalkers.length + 1, talk: { watchedAt, rate } }]);
+  res.status(201).send({ name, age, id: getTalkers.length + 1, talk: { watchedAt, rate } });
 });
 
 // não remova esse endpoint, e para o avaliador funcionar

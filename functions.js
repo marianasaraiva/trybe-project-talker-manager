@@ -16,7 +16,7 @@ function rand() {
   return ((Math.random() + 1).toString(36).substring(2, 10));
 }
 
-function token() {
+function tokenGenerate() {
   return rand() + rand();
 }
 
@@ -43,16 +43,20 @@ function validPassword(req, res, next) {
   next();
 }
 
-function validToken(req, res, next) {
-  const test = req.headers.authorization;
-  const tokenRegex = !/^[a-zA-Z0-9]{12}$/;
+  function validToken(req, res, next) {
+    const token = req.headers.authorization;
+    const tokenRegex = /^[a-zA-Z0-9]{16}$/;
+    if (!token) {
+      return res.status(401).json({ message: 'Token não encontrado' });
+    }
 
-  if (!test || tokenRegex.test(test)) {
-    return res.status(401).json({ message: 'invalid token' });
+    if (!tokenRegex.test(token)) {
+      return res.status(401).json({ message: 'Token inválido' });
+    }
+
+    next();
   }
-
-  next();
-}
+// validToken();
 
 function validName(req, res, next) {
   const { name } = req.body;
@@ -93,14 +97,32 @@ function validTalk(req, res, next) {
   next();
 }
 
+function validTalkKeys(req, res, next) {
+  const { talk } = req.body;
+  const { watchedAt, rate } = talk;
+  const regexDate = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+  if (rate < 1 || rate > 5) {
+    return res.status(400).json({
+      message: 'O campo "rate" deve ser um inteiro de 1 à 5',
+    });
+  }
+  if (!regexDate.test(watchedAt)) {
+   return res.status(400).json({
+      message: 'O campo "watchedAt" deve ter o formato "dd/mm/aaaa"',
+    });
+  }
+  next();
+}
+
 module.exports = {
   getTalker,
-  token,
+  tokenGenerate,
   validPassword,
   validEmail,
   validName,
   validAge,
   validTalk,
   setTalker,
+  validTalkKeys,
   validToken,
 };
