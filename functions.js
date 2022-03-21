@@ -84,18 +84,15 @@ function validTalk(req, res, next) {
   const { talk } = req.body;
   if (!talk) {
     return res.status(400).json({
-      message:
-        'O campo "talk" é obrigatório e "watchedAt" e "rate" não podem ser vazios',
+      message: 'O campo "talk" é obrigatório e "watchedAt" e "rate" não podem ser vazios',
     });
   }
-  const { watchedAt, rate } = talk;
-  if (!watchedAt || !rate) {
+  const { rate } = talk;
+  if (rate < 1 || rate > 5) {
     return res.status(400).json({
-      message:
-        'O campo "talk" é obrigatório e "watchedAt" e "rate" não podem ser vazios',
+      message: 'O campo "rate" deve ser um inteiro de 1 à 5',
     });
   }
-
   next();
 }
 
@@ -103,9 +100,9 @@ function validTalkKeys(req, res, next) {
   const { talk } = req.body;
   const { watchedAt, rate } = talk;
   const regexDate = /^(\d{2})\/(\d{2})\/(\d{4})$/;
-  if (rate < 1 || rate > 5) {
+  if (!watchedAt || !rate) {
     return res.status(400).json({
-      message: 'O campo "rate" deve ser um inteiro de 1 à 5',
+      message: 'O campo "talk" é obrigatório e "watchedAt" e "rate" não podem ser vazios',
     });
   }
   if (!regexDate.test(watchedAt)) {
