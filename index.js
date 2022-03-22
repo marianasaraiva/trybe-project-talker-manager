@@ -93,7 +93,7 @@ app.put('/talker/:id',
 app.delete('/talker/:id', validToken, async (req, res) => {
   const { id } = req.params;
   const getTalkers = await getTalker();
-  const deleteID = getTalkers.filter((talker) => talker.id === id);
+  const deleteID = getTalkers.filter((talker) => talker.id !== id);
   await setTalker([deleteID]);
   res.status(204).send();
 });
